@@ -280,7 +280,6 @@
     var mobile = window.innerWidth <= 900;
     dragX = get(mobile ? 'dragX_mobile' : 'dragX', 0);
     dragY = get(mobile ? 'dragY_mobile' : 'dragY', 0);
-    catSize = get('catSize', 100);
     updateCatTransform();
   })();
 
