@@ -50,7 +50,7 @@
   /* ── Cat dragging state ──────────────────────────────── */
   var dragEl = document.getElementById('cat-wrapper');
   var dragX = 0, dragY = 0;
-  var catSize = get('catSize', 100);
+  var catSize = get('catSize', window.innerWidth <= 900 ? 80 : 100);
   var SIZE_PRESETS = [60, 80, 100, 120, 140, 160, 200, 240];
 
   function updateCatTransform() {
