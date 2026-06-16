@@ -2105,38 +2105,51 @@
         !e.closest("clipPath")
       );
     }
-    fetch("../svg/stretch-start.svg")
-      .then((e) => e.text())
-      .then((e) => {
-        let t = new DOMParser().parseFromString(e, "image/svg+xml"),
-          n = Array.from(t.querySelectorAll("rect")).filter(Nr);
-        (z.length = 0),
-          (Ie.length = 0),
-          (Me.length = 0),
-          (Re.length = 0),
-          n.forEach((i, o) => {
-            (z[o] = ai(i)), (Ie[o] = si(i)), (Me[o] = li(i)), (Re[o] = ci(i));
-          });
-        let r = t.getElementById("tail-path");
-        r && (ln = Br(r.getAttribute("d"))),
-          wt && ((se = Tr(wt)), (wt = null), _e());
-      })
-      .catch((e) => console.error("Failed to load stretch-start.svg:", e));
-    Ft.addEventListener("load", () => {
-      let e = Ft.contentDocument;
-      if (e) {
-        if ((Wt(e, "stretch-end"), z.length === 0)) {
-          wt = e;
-          return;
-        }
-        (se = Tr(e)), _e();
+    // ── Parse stretch-start.svg inline (synchronous) ──
+    try {
+      var _ss = '<svg width="40" height="145" viewBox="0 0 40 145" fill="none" xmlns="http://www.w3.org/2000/svg"><path id="leg-fl-start" d="M11 26H13V31H12V34H11V37H9V32H10V28H11V26Z" fill="var(--cat-color)"/><path d="M13 8H11V10H10V12H9V17H10V21H12V22H13V23H15V24H25V23H27V22H28V21H29V20H30V17H31V13H30V10H29V9H28V8H26V7H24V6H16V7H13V8Z" fill="var(--cat-color)"/><path id="tail-path" d="M27 51V50H33V49H35V48H36V47H35V44H36V43H38V44H39V45H40V50H39V51H38V52H36V53H31V52H28V51H27Z" fill="var(--cat-color)"/><g id="whiskers" data-heat-overlay="true"><rect width="5" height="1" transform="translate(6 14)" fill="var(--cat-color)"/><rect width="5" height="1" transform="translate(29 14)" fill="var(--cat-color)"/><rect width="6" height="1" transform="translate(5 17)" fill="var(--cat-color)"/><rect width="6" height="1" transform="translate(29 17)" fill="var(--cat-color)"/></g><path d="M11 9V6H12V4H13V3H14V2H15V4H16V5H17V9H16V10H12V9H11Z" fill="var(--cat-color)"/><path d="M24 5H23V9H24V10H27V9H28V4H27V3H26V2H25V3H24V5Z" fill="var(--cat-color)"/><rect x="13" y="22" width="14" height="3" fill="var(--cat-color)"/><rect x="12" y="24" width="16" height="3" fill="var(--cat-color)"/><rect x="12" y="26" width="16" height="3" fill="var(--cat-color)"/><rect x="12" y="28" width="16" height="3" fill="var(--cat-color)"/><rect x="12" y="30" width="16" height="3" fill="var(--cat-color)"/><rect x="12" y="32" width="16" height="3" fill="var(--cat-color)"/><rect x="11" y="34" width="18" height="3" fill="var(--cat-color)"/><rect x="11" y="36" width="18" height="3" fill="var(--cat-color)"/><rect x="11" y="38" width="18" height="3" fill="var(--cat-color)"/><rect x="11" y="40" width="18" height="3" fill="var(--cat-color)"/><rect x="11" y="42" width="18" height="3" fill="var(--cat-color)"/><rect x="11" y="44" width="18" height="3" fill="var(--cat-color)"/><rect x="11" y="46" width="18" height="3" fill="var(--cat-color)"/><rect x="10" y="48" width="20" height="3" fill="var(--cat-color)"/><rect x="10" y="50" width="20" height="3" fill="var(--cat-color)"/><rect width="1" height="3" transform="translate(22 13)" fill="var(--eye-bg-color, #FFFFFF)"/><rect width="1" height="3" transform="translate(26 13)" fill="var(--eye-bg-color, #FFFFFF)"/><rect width="3" height="5" transform="translate(23 12)" fill="var(--eye-bg-color, #FFFFFF)"/><rect width="3" height="3" transform="translate(23 13)" fill="var(--cat-color)"/><rect width="1" height="3" transform="translate(13 13)" fill="var(--eye-bg-color, #FFFFFF)"/><rect width="1" height="3" transform="translate(17 13)" fill="var(--eye-bg-color, #FFFFFF)"/><rect width="3" height="5" transform="translate(14 12)" fill="var(--eye-bg-color, #FFFFFF)"/><rect width="3" height="3" transform="translate(14 13)" fill="var(--cat-color)"/><path id="leg-fr-start" d="M29 26H27V31H28V34H29V37H31V32H30V28H29V26Z" fill="var(--cat-color)"/><path id="leg-rl-start" d="M10 55V51H18V55H17V57H16V59H12V57H11V55H10Z" fill="var(--cat-color)"/><path id="leg-rr-start" d="M22 55V51H30V55H29V57H28V59H24V57H23V55H22Z" fill="var(--cat-color)"/></svg>',
+          _sd = new DOMParser().parseFromString(_ss, "image/svg+xml"),
+          _sr = Array.from(_sd.querySelectorAll("rect")).filter(Nr);
+      (z.length = 0), (Ie.length = 0), (Me.length = 0), (Re.length = 0);
+      _sr.forEach(function (i, o) {
+        (z[o] = ai(i)), (Ie[o] = si(i)), (Me[o] = li(i)), (Re[o] = ci(i));
+      });
+      var _tp = _sd.getElementById("tail-path");
+      _tp && (ln = Br(_tp.getAttribute("d")));
+    } catch (e) {
+      console.error("Failed to parse stretch-start.svg:", e);
+    }
+
+    // ── Inject stretch-end.svg inline (synchronous) ──
+    try {
+      var _se = '<svg width="40" height="145" viewBox="0 0 40 145" fill="none" xmlns="http://www.w3.org/2000/svg"><defs><style>:root{--cat-color:#1A1A1A;--cat-outline:#FFFFFF;}</style><filter id="cat-outline" x="-20%" y="-20%" width="140%" height="140%"><feMorphology operator="dilate" radius="1" in="SourceAlpha" result="dilated"/><feFlood flood-color="var(--cat-outline)" result="flood"/><feComposite in="flood" in2="dilated" operator="in" result="outline"/><feMerge><feMergeNode in="outline"/><feMergeNode in="SourceGraphic"/></feMerge></filter><filter id="eye-outline" x="-50%" y="-50%" width="200%" height="200%"><feMorphology operator="dilate" radius="1" in="SourceAlpha" result="dilated"/><feFlood flood-color="#F5F5F5" result="flood"/><feComposite in="flood" in2="dilated" operator="in" result="outline"/><feMerge><feMergeNode in="outline"/><feMergeNode in="SourceGraphic"/></feMerge></filter><clipPath id="head-clip"><path d="M13 8H11V10H10V12H9V17H10V21H12V22H13V23H15V24H25V23H27V22H28V21H29V20H30V17H31V13H30V10H29V9H28V8H26V7H24V6H16V7H13V8Z"/></clipPath><clipPath id="leg-fl-clip"><path d="M11 34H13V39H12V42H11V45H9V40H10V36H11V34Z"/></clipPath><clipPath id="leg-fr-clip"><path d="M29 34H27V39H28V42H29V45H31V40H30V36H29V34Z"/></clipPath><clipPath id="leg-rl-clip"><path d="M10 138V134H18V138H17V140H16V142H12V140H11V138H10Z"/></clipPath><clipPath id="leg-rr-clip"><path d="M22 138V134H30V138H29V140H28V142H24V140H23V138H22Z"/></clipPath></defs><g id="cat-content" filter="url(#cat-outline)"><g id="tail" data-patch-frame="27 125 1 1" data-tail-path-id="true"></g><g id="head" data-patch-frame="9 6 1 1"><path d="M13 8H11V10H10V12H9V17H10V21H12V22H13V23H15V24H25V23H27V22H28V21H29V20H30V17H31V13H30V10H29V9H28V8H26V7H24V6H16V7H13V8Z" fill="var(--cat-color)"/><g class="patches" clip-path="url(#head-clip)"></g></g><g id="whiskers" data-heat-overlay="true"><rect width="5" height="1" transform="translate(6 14)" fill="var(--cat-color)"/><rect width="5" height="1" transform="translate(29 14)" fill="var(--cat-color)"/><rect width="6" height="1" transform="translate(5 17)" fill="var(--cat-color)"/><rect width="6" height="1" transform="translate(29 17)" fill="var(--cat-color)"/></g><g id="ear-left" data-ear-position="11 2"></g><g id="ear-right" data-ear-position="23 2"></g><rect x="14" y="22" width="12" height="6" fill="var(--cat-color)"/><rect x="13" y="27" width="14" height="6" fill="var(--cat-color)"/><rect x="12" y="32" width="16" height="9" fill="var(--cat-color)"/><rect x="13" y="40" width="14" height="9" fill="var(--cat-color)"/><rect x="14" y="48" width="12" height="9" fill="var(--cat-color)"/><rect x="14" y="56" width="12" height="9" fill="var(--cat-color)"/><rect x="14" y="64" width="12" height="9" fill="var(--cat-color)"/><rect x="14" y="72" width="12" height="9" fill="var(--cat-color)"/><rect x="14" y="80" width="12" height="9" fill="var(--cat-color)"/><rect x="13" y="88" width="14" height="9" fill="var(--cat-color)"/><rect x="13" y="96" width="14" height="9" fill="var(--cat-color)"/><rect x="12" y="104" width="16" height="9" fill="var(--cat-color)"/><rect x="11" y="112" width="18" height="9" fill="var(--cat-color)"/><rect x="10" y="120" width="20" height="9" fill="var(--cat-color)"/><rect x="10" y="128" width="20" height="9" fill="var(--cat-color)"/><g id="leg-fl" data-patch-frame="9 34 0.5 1" data-stretch-y-delta="-8" data-stretch-cy="39.5"><path d="M11 34H13V39H12V42H11V45H9V40H10V36H11V34Z" fill="var(--cat-color)"/><g class="patches" clip-path="url(#leg-fl-clip)"></g></g><g id="leg-fr" data-patch-frame="27 34 0.5 1" data-stretch-y-delta="-8" data-stretch-cy="39.5"><path d="M29 34H27V39H28V42H29V45H31V40H30V36H29V34Z" fill="var(--cat-color)"/><g class="patches" clip-path="url(#leg-fr-clip)"></g></g><g id="leg-rl" data-patch-frame="10 134 1 1" data-stretch-y-delta="-83" data-stretch-cy="138"><path d="M10 138V134H18V138H17V140H16V142H12V140H11V138H10Z" fill="var(--cat-color)"/><g class="patches" clip-path="url(#leg-rl-clip)"></g></g><g id="leg-rr" data-patch-frame="22 134 1 1" data-stretch-y-delta="-83" data-stretch-cy="138"><path d="M22 138V134H30V138H29V140H28V142H24V140H23V138H22Z" fill="var(--cat-color)"/><g class="patches" clip-path="url(#leg-rr-clip)"></g></g><g id="body" data-patch-frame="10 22 1 9"></g><g><rect width="1" height="3" transform="translate(22 13)" fill="var(--eye-bg-color, #FFFFFF)"/><rect width="1" height="3" transform="translate(26 13)" fill="var(--eye-bg-color, #FFFFFF)"/><rect width="3" height="5" transform="translate(23 12)" fill="var(--eye-bg-color, #FFFFFF)"/></g><rect class="pupil-right" width="3" height="3" transform="translate(23 13)" fill="var(--eye-color-right, var(--eye-color, var(--cat-color)))"/><g><rect width="1" height="3" transform="translate(13 13)" fill="var(--eye-bg-color, #FFFFFF)"/><rect width="1" height="3" transform="translate(17 13)" fill="var(--eye-bg-color, #FFFFFF)"/><rect width="3" height="5" transform="translate(14 12)" fill="var(--eye-bg-color, #FFFFFF)"/></g><rect class="pupil-left" width="3" height="3" transform="translate(14 13)" fill="var(--eye-color-left, var(--eye-color, var(--cat-color)))"/></g></svg>',
+          _ed = new DOMParser().parseFromString(_se, "image/svg+xml"),
+          _es = _ed.documentElement,
+          _ec = document.getElementById("stretch-svg-end");
+      if (_ec && _ec.parentNode) {
+        var _ei = document.importNode(_es, true);
+        _ei.setAttribute("id", "stretch-svg-end");
+        _ec.parentNode.replaceChild(_ei, _ec);
+        _ei.removeAttribute("width");
+        _ei.removeAttribute("height");
+        Ft = _ei;
+        var _da = {
+          documentElement: _ei,
+          getElementById: function (id) { return _ei.querySelector("#" + id); },
+          createElementNS: function (ns, name) { return document.createElementNS(ns, name); },
+          querySelector: function (sel) { return _ei.querySelector(sel); },
+          querySelectorAll: function (sel) { return _ei.querySelectorAll(sel); },
+        };
+        Wt(_da, "stretch-svg-end");
+        if (z.length > 0) { se = Tr(_da); _e(); }
       }
-    });
+    } catch (e) {
+      console.error("Failed to load stretch-end.svg:", e);
+    }
     function Tr(e) {
       let t = "http://www.w3.org/2000/svg",
         n = e.documentElement;
       n.setAttribute("viewBox", "-20 -2 80 148"),
-        n.setAttribute("width", "80"),
         n.setAttribute("preserveAspectRatio", "xMidYMin meet");
       let o = Array.from(n.querySelectorAll("rect"))
         .filter(Nr)
@@ -2369,8 +2382,14 @@
       bi = 0.32;
     function kr() {
       if (!se) {
+        if (x) { Be = requestAnimationFrame(kr); return; }
         Be = null;
         return;
+      }
+      if (x && !document.body.classList.contains("dragging")) {
+        document.body.classList.add("dragging");
+        window.electronAPI.setStretchMode(!0);
+        for (let n = 0; n < B; n++) (R[n] = 0), (G[n] = 0);
       }
       Y && ((P += (0 - P) * bi), P < 0.01 && (P = 0));
       let e = 0;
@@ -2413,9 +2432,9 @@
           (vr = e.screenY),
           (P = 0);
         for (let n = 0; n < B; n++) (R[n] = 0), (G[n] = 0);
-        document.body.classList.add("dragging"),
-          window.electronAPI.setStretchMode(!0),
-          Dr();
+        se && (document.body.classList.add("dragging"),
+          window.electronAPI.setStretchMode(!0));
+        Dr();
       }
     }
     function Dt() {

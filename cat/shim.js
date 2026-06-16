@@ -55,9 +55,7 @@
 
   function updateCatTransform() {
     if (!dragEl) return;
-    if (window.innerWidth > 900) {
-      dragEl.style.setProperty('--cat-size', catSize + 'px');
-    }
+    dragEl.style.setProperty('--cat-size', catSize + 'px');
     dragEl.style.transform = 'translate(' + dragX + 'px, ' + dragY + 'px)';
   }
 
@@ -536,6 +534,20 @@
       wrap.addEventListener('mouseleave', hideSubmenu);
       submenu.addEventListener('mouseenter', showSubmenu);
       submenu.addEventListener('mouseleave', hideSubmenu);
+
+      // Mobile: tap the Size button to toggle submenu
+      sizeBtn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        if (submenuOpen) {
+          // close submenu immediately
+          if (hideTimeout) { clearTimeout(hideTimeout); hideTimeout = null; }
+          submenu.style.display = 'none';
+          submenuOpen = false;
+          sizeBtn.style.background = 'none';
+        } else {
+          showSubmenu();
+        }
+      });
 
       wrap.appendChild(submenu);
       lastSep.parentNode.insertBefore(wrap, lastSep);

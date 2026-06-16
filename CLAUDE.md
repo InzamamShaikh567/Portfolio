@@ -9,7 +9,7 @@ Single-file static portfolio website (`index.html`) with embedded CSS and JS.
 - Golden ambient blobs animation (CSS-only, soft-light blend)
 - Custom cursor, grain texture, scroll reveal animations
 - Desktop side rail (section navigation) + mobile bottom dock
-- Comnyang interactive desktop pet cat (desktop-only, bottom-right)
+- Comnyang interactive desktop pet cat (bottom-right, desktop + mobile)
 - Contact form with Web3Forms integration
 - Responsive (breakpoints at 768px, 900px)
 
@@ -37,10 +37,12 @@ Single-file static portfolio website (`index.html`) with embedded CSS and JS.
 
 ### Comnyang Cat
 - Positioned bottom-right: `--cat-top: 70%; --cat-left: 80%` in `cat/renderer/styles.css`
-- Hidden on mobile (max-width: 900px)
-- Interactive: follows cursor, reacts to key press, scroll, draggable
-- Right-click context menu: name, color patterns, size, sound toggle
+- Visible on mobile (≤900px) with mobile-specific positioning (`--cat-top: 110px; --cat-left: calc(50vw + 130px)`)
+- Interactive: follows cursor, reacts to key press, scroll, draggable (desktop + mobile touch)
+- Right-click context menu (long-press on mobile): name, color patterns, size, sound toggle
+- Stretch SVGs inlined in `renderer.js` via DOMParser (synchronous, no async race on first drag)
 - Scripts (in order): `cat/shim.js`, `cat/renderer/cell-mappings.js`, `cat/renderer/renderer.js`
+- Mobile size changes work: JS `updateCatTransform()` sets `--cat-size` on all screen sizes
 
 ## File Structure
 - `index.html` — main portfolio (all HTML + embedded CSS + JS)
@@ -66,3 +68,13 @@ Single-file static portfolio website (`index.html`) with embedded CSS and JS.
 - Nav-dock backdrop-filter removed (pre-existing fix from earlier session).
 - **Known unresolved issue**: User reports nav-rail/nav-dock positioning bug — mobile dock appears centered instead of at bottom, desktop rail appears centered instead of at left edge. CSS has `left:0` / `bottom:0` with correct fixed positioning; needs on-device debugging.
 - ECommerce project link still `#` (user said they'll fix later).
+
+## Session Log (2026-06-17)
+- Reverted `index.html` to previous commit (removed cat integration from the page). `cat/` folder and its mobile implementation code kept intact for reuse.
+- Created `cat/cat.md` — detailed implementation docs for the mobile cat integration, intended as reference for future projects.
+
+## Session Log (2026-06-18)
+- **Inline SVG fix**: Replaced async `<object>`-based stretch SVGs with synchronous DOMParser-parsed inline SVGs in `renderer.js`. Fixes first-drag flash and stretch animation not working on first drag. Sizing quirk: inline SVG `width`/`height` attributes interfere with CSS `aspect-ratio` in Chromium — fixed by removing attributes after import so CSS controls sizing.
+- **Mobile context menu Size fix**: Size submenu used `mouseenter`/`mouseleave` (no mobile equivalent). Added `click` handler on Size button with `e.stopPropagation()` to toggle submenu on tap.
+- **Mobile size changes fix**: Removed `window.innerWidth > 900` guard in `updateCatTransform()` and hardcoded `width: 80px; height: 80px` in mobile CSS. `--cat-size` now applies on all screen sizes.
+- Updated `cat/cat.md` with inline SVG approach docs, mobile context menu fix, and mobile sizing notes.

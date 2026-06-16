@@ -925,7 +925,7 @@ body[data-purring] #purr-hearts {
   left: var(--cat-left, 50%);
   transform: translateX(-50%);
   width: calc(var(--cat-size) * 1.5);
-  /* viewBox 확장 후 비율: 80:148 (외곽선 dilate 여유 위/아래 2씩 추가) */
+  /* viewBox */
   aspect-ratio: 80 / 148;
   pointer-events: none;
   image-rendering: pixelated;
@@ -1216,11 +1216,6 @@ body.dragging #stretch-svg-end {
     --cat-left: calc(50vw + 130px);
     --cat-size: 80px;
     z-index: 10001;
-  }
-  #cat-wrapper #drag-handle,
-  #cat-wrapper #cat {
-    width: 80px;
-    height: 80px;
   }
   #cat-speech-bubble {
     max-width: min(75vw, 240px);
