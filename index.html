@@ -15,6 +15,7 @@
       href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Satoshi:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
       rel="stylesheet"
     />
+    <link rel="stylesheet" href="cat/renderer/styles.css" />
     <style>
       :root {
         --bg: #080808;
@@ -68,20 +69,75 @@
         background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
       }
 
-      /* Ambient Glow */
-      .ambient-glow {
+      /* Ambient Blobs */
+      .blob-bg {
         position: fixed;
-        width: 700px;
-        height: 700px;
-        top: -250px;
-        right: -250px;
-        background: radial-gradient(
-          circle,
-          var(--accent-glow) 0%,
-          transparent 70%
-        );
-        pointer-events: none;
+        inset: 0;
         z-index: 0;
+        pointer-events: none;
+        overflow: hidden;
+      }
+
+      .blob {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(var(--b, 60px));
+        opacity: var(--o, 0.12);
+        mix-blend-mode: soft-light;
+        will-change: transform;
+        width: var(--s, 500px);
+        height: var(--s, 500px);
+        left: var(--x, 50%);
+        top: var(--y, 50%);
+        margin-left: calc(var(--s, 500px) / -2);
+        margin-top: calc(var(--s, 500px) / -2);
+        animation: var(--anim, blob-drift-1) var(--d, 40s) ease-in-out var(--del, 0s) infinite;
+      }
+
+      .blob::before {
+        content: '';
+        display: block;
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        background: radial-gradient(circle at center, var(--accent) 0%, var(--accent) 25%, transparent 70%);
+      }
+
+      .blob:nth-child(3n+1) { --anim: blob-drift-1; }
+      .blob:nth-child(3n+2) { --anim: blob-drift-2; }
+      .blob:nth-child(3n+3) { --anim: blob-drift-3; }
+
+      @keyframes blob-drift-1 {
+        0%, 100% { transform: translate(0, 0) scale(1); }
+        25%  { transform: translate(100px, -120px) scale(1.12); }
+        50%  { transform: translate(-70px, -180px) scale(0.90); }
+        75%  { transform: translate(130px, -60px) scale(1.08); }
+      }
+      @keyframes blob-drift-2 {
+        0%, 100% { transform: translate(0, 0) scale(1); }
+        25%  { transform: translate(-110px, -90px) scale(0.88); }
+        50%  { transform: translate(80px, -160px) scale(1.10); }
+        75%  { transform: translate(-60px, -50px) scale(0.94); }
+      }
+      @keyframes blob-drift-3 {
+        0%, 100% { transform: translate(0, 0) scale(1); }
+        25%  { transform: translate(70px, -140px) scale(1.08); }
+        50%  { transform: translate(-100px, -80px) scale(0.92); }
+        75%  { transform: translate(90px, -180px) scale(1.06); }
+      }
+
+      @media (max-width: 768px) {
+        .blob {
+          --s: 220px !important;
+          --b: 30px !important;
+          --o: 0.09 !important;
+          --d: 55s !important;
+          mix-blend-mode: normal;
+        }
+        .blob:nth-child(7),
+        .blob:nth-child(8) {
+          display: none;
+        }
       }
 
       /* Custom Cursor */
@@ -604,151 +660,190 @@
         margin-bottom: 60px;
       }
 
-      /* Projects */
+      /* Projects Showcase */
       .projects-section {
         background: var(--bg-2);
-        overflow: hidden;
         text-align: center;
       }
 
-      .projects-wrapper {
-        justify-content: center;
-        display: flex;
-        gap: 28px;
-        padding: 20px 0;
-        overflow-x: auto;
-        scrollbar-width: none;
-        cursor: grab;
-        scroll-snap-type: x mandatory;
+      .project-showcase {
+        padding: 100px 0;
+        border-bottom: 1px solid var(--border);
       }
 
-      .projects-wrapper::-webkit-scrollbar {
-        display: none;
-      }
-      .projects-wrapper:active {
-        cursor: grabbing;
+      .project-showcase:last-child {
+        border-bottom: none;
       }
 
-      .project-card {
-        flex: 0 0 360px;
-        background: var(--bg);
-        border: 1px solid var(--border);
-        position: relative;
-        overflow: hidden;
-        transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-        scroll-snap-align: start;
-      }
-
-      .project-card::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        background: var(--accent-glow);
-        opacity: 0;
-        transition: opacity 0.5s ease;
-        z-index: 1;
-      }
-
-      .project-card:hover {
-        transform: translateY(-10px) scale(1.02);
-        border-color: var(--accent);
-      }
-
-      .project-card:hover::before {
-        opacity: 1;
-      }
-
-      .project-image {
-        height: 180px;
-        position: relative;
+      .showcase-inner {
         display: flex;
         align-items: center;
-        justify-content: center;
-        border-bottom: 1px solid var(--border);
-        overflow: hidden;
+        gap: 80px;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 48px;
       }
 
-      .project-image img {
+      .showcase-inner.reverse {
+        flex-direction: row-reverse;
+      }
+
+      .showcase-image {
+        flex: 0 0 55%;
+        position: relative;
+        overflow: hidden;
+        border: 1px solid var(--border);
+        background: var(--bg-3);
+        height: 420px;
+      }
+
+      .showcase-image img {
         width: 100%;
         height: 100%;
         object-fit: cover;
+        object-position: top center;
+        display: block;
+        transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
       }
 
-      .project-image::after {
-        content: "";
+      .project-showcase:hover .showcase-image img {
+        transform: scale(1.04);
+      }
+
+      .showcase-image::after {
+        content: '';
         position: absolute;
         inset: 0;
         background: var(--accent);
-        transform: translateY(100%);
-        transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        opacity: 0;
+        transition: opacity 0.5s ease;
       }
 
-      .project-card:hover .project-image::after {
-        transform: translateY(0);
+      .project-showcase:hover .showcase-image::after {
+        opacity: 0.06;
       }
 
-      .project-number {
+      .showcase-content {
+        flex: 0 0 33%;
+        text-align: left;
+      }
+
+      .showcase-number {
         font-family: var(--font-mono);
-        font-size: 9px;
+        font-size: 11px;
         color: var(--accent);
-        position: absolute;
-        top: 18px;
-        left: 22px;
-        z-index: 2;
-      }
-
-      .project-info {
-        padding: 26px;
-      }
-
-      .project-title {
-        font-family: var(--font-serif);
-        font-size: 20px;
-        font-weight: 500;
-        margin-bottom: 8px;
-      }
-
-      .project-desc {
-        font-size: 12px;
-        color: var(--text-2);
-        line-height: 1.7;
         margin-bottom: 16px;
+        letter-spacing: 0.1em;
       }
 
-      .project-tags {
+      .showcase-title {
+        font-family: var(--font-serif);
+        font-size: clamp(26px, 2.8vw, 36px);
+        font-weight: 500;
+        margin-bottom: 18px;
+        line-height: 1.2;
+      }
+
+      .showcase-desc {
+        font-size: 14px;
+        color: var(--text-2);
+        line-height: 1.8;
+        margin-bottom: 22px;
+      }
+
+      .showcase-tags {
         display: flex;
         flex-wrap: wrap;
-        gap: 6px;
+        gap: 8px;
+        margin-bottom: 28px;
       }
 
-      .project-tag {
-        padding: 5px 12px;
+      .showcase-tag {
+        padding: 6px 14px;
         background: var(--surface);
-        font-size: 9px;
+        border: 1px solid var(--border);
+        font-size: 10px;
         font-weight: 500;
         text-transform: uppercase;
         letter-spacing: 0.05em;
         color: var(--text-2);
+        transition: all 0.3s ease;
       }
 
-      .project-links {
-        margin-top: 16px;
-        display: flex;
-        gap: 12px;
+      .showcase-tag:hover {
+        border-color: var(--accent);
+        color: var(--accent);
       }
 
-      .project-link {
+      .showcase-link {
         display: inline-flex;
         align-items: center;
-        gap: 6px;
-        color: var(--text-2);
+        gap: 8px;
+        color: var(--text);
         text-decoration: none;
-        font-size: 13px;
-        transition: color 0.3s ease;
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        padding-bottom: 4px;
+        border-bottom: 1px solid var(--accent);
+        transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
       }
 
-      .project-link:hover {
+      .showcase-link:hover {
         color: var(--accent);
+        gap: 14px;
+      }
+
+      .showcase-link svg {
+        transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+
+      .showcase-link:hover svg {
+        transform: translateX(6px);
+      }
+
+      .showcase-reveal {
+        opacity: 0;
+        transform: translateY(60px);
+        transition: all 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+
+      .showcase-reveal.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      @media (max-width: 768px) {
+        .project-showcase {
+          padding: 60px 0;
+        }
+
+        .showcase-inner {
+          flex-direction: column !important;
+          gap: 20px;
+          padding: 0 24px;
+        }
+
+        .showcase-image {
+          flex: 0 0 auto;
+          width: 100%;
+          height: 240px;
+        }
+
+        .showcase-content {
+          flex: 0 0 auto;
+          width: 100%;
+          text-align: center;
+        }
+
+        .showcase-number {
+          text-align: center;
+        }
+
+        .showcase-tags {
+          justify-content: center;
+        }
       }
 
       /* Skills */
@@ -1220,6 +1315,120 @@
         transition: transform 0.1s ease-out;
       }
 
+      /* Section Nav Rail (Desktop) */
+      .nav-rail {
+        position: fixed;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 90;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        padding: 12px 0;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease, visibility 0.3s ease;
+        right: auto;
+        align-items: flex-start;
+        justify-content: flex-start;
+        mix-blend-mode: normal;
+      }
+      .nav-rail.is-visible {
+        opacity: 1;
+        visibility: visible;
+      }
+      .rail-link {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 4px 16px 4px 12px;
+        text-decoration: none;
+        color: var(--text-3);
+        font-family: var(--font-mono);
+        font-size: 10px;
+        letter-spacing: 0.06em;
+        border-left: 1.5px solid transparent;
+        transition: color 0.18s ease, border-color 0.18s ease;
+      }
+      .rail-link:hover {
+        color: var(--text);
+      }
+      .rail-link.is-active {
+        color: var(--accent);
+        border-left-color: var(--accent);
+      }
+      .rail-link.is-external::after {
+        content: '\2197';
+        font-size: 9px;
+        opacity: 0.5;
+        margin-left: 2px;
+      }
+      .rail-num {
+        font-size: 9px;
+        opacity: 0.5;
+        min-width: 14px;
+      }
+      .rail-label {
+        text-transform: uppercase;
+      }
+      @media (max-width: 900px) {
+        .nav-rail { display: none; }
+      }
+
+      /* Section Nav Dock (Mobile) */
+      .nav-dock {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 90;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0;
+        padding: 0 8px;
+        background: rgba(15, 15, 15, 0.85);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-top: 1px solid var(--border);
+        font-family: var(--font-mono);
+        font-size: 10px;
+        letter-spacing: 0.06em;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(100%);
+        transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
+        top: auto;
+        mix-blend-mode: normal;
+      }
+      .nav-dock.is-visible {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+      }
+      .dock-link {
+        flex: 1;
+        text-align: center;
+        padding: 10px 4px;
+        text-decoration: none;
+        color: var(--text-3);
+        text-transform: uppercase;
+        border-bottom: 1.5px solid transparent;
+        transition: color 0.18s ease, border-bottom-color 0.18s ease;
+        white-space: nowrap;
+      }
+      .dock-link:hover {
+        color: var(--text);
+      }
+      .dock-link.is-active {
+        color: var(--accent);
+        border-bottom-color: var(--accent);
+      }
+      @media (min-width: 901px) {
+        .nav-dock { display: none; }
+      }
+
       /* Responsive */
       @media (max-width: 768px) {
         nav {
@@ -1306,16 +1515,6 @@
         section {
           padding: 100px 24px;
         }
-        .projects-wrapper {
-          justify-content: flex-start;
-          padding-left: 24px;
-          padding-right: 24px;
-          scroll-snap-type: x mandatory;
-        }
-        .project-card {
-          flex: 0 0 280px;
-          scroll-snap-align: start;
-        }
         .contact-wrapper {
           grid-template-columns: 1fr;
         }
@@ -1338,12 +1537,31 @@
           width: 80px;
           height: 80px;
         }
+
+        .nav-dock {
+          opacity: 1;
+          visibility: visible;
+          transform: translateY(0);
+        }
+
+        body {
+          padding-bottom: 44px;
+        }
       }
     </style>
   </head>
   <body>
     <div class="grain"></div>
-    <div class="ambient-glow"></div>
+    <div class="blob-bg" aria-hidden="true">
+      <div class="blob" style="--x:12%;--y:-8%;--s:480px;--d:28s;--del:0s;--o:0.12;--b:55px"></div>
+      <div class="blob" style="--x:50%;--y:12%;--s:350px;--d:35s;--del:4s;--o:0.10;--b:65px"></div>
+      <div class="blob" style="--x:85%;--y:0%;--s:560px;--d:40s;--del:8s;--o:0.08;--b:75px"></div>
+      <div class="blob" style="--x:20%;--y:52%;--s:300px;--d:25s;--del:2s;--o:0.11;--b:50px"></div>
+      <div class="blob" style="--x:92%;--y:42%;--s:420px;--d:32s;--del:10s;--o:0.10;--b:60px"></div>
+      <div class="blob" style="--x:55%;--y:78%;--s:480px;--d:38s;--del:6s;--o:0.09;--b:70px"></div>
+      <div class="blob" style="--x:3%;--y:88%;--s:330px;--d:42s;--del:12s;--o:0.12;--b:45px"></div>
+      <div class="blob" style="--x:72%;--y:95%;--s:440px;--d:26s;--del:9s;--o:0.08;--b:65px"></div>
+    </div>
     <div class="cursor" id="cursor"></div>
     <div class="cursor-outline" id="cursorOutline"></div>
 
@@ -1360,6 +1578,7 @@
         <li><a href="#home">Home</a></li>
         <li><a href="#projects">Work</a></li>
         <li><a href="#about">About</a></li>
+        <li><a href="https://drive.google.com/file/d/1DrhQGHLgJqYE3lOKx6fXlPpd_Bj0QzMo/view" target="_blank">Resume</a></li>
         <li><a href="#contact">Contact</a></li>
       </ul>
     </nav>
@@ -1415,144 +1634,171 @@
     <section class="projects-section" id="projects">
       <div class="section-label">Selected Work</div>
       <h2 class="section-title reveal">Featured Projects</h2>
-      <div class="projects-wrapper" id="projectsTrack">
-        <a
-          href="https://github.com/InzamamShaikh567/Indian-recipe-app"
-          target="_blank"
-          class="project-card"
-          style="text-decoration: none; color: inherit"
-        >
-          <div class="project-image">
-            <span class="project-number">01</span>
-            <img
-              src="assests/Recipe.jpg"
-              alt="Indian Recipe App"
-              loading="lazy"
-            />
+
+      <div class="project-showcase showcase-reveal">
+        <div class="showcase-inner">
+          <a href="https://photo-restorations.vercel.app/" target="_blank" class="showcase-image-link">
+          <div class="showcase-image">
+            <img src="assests/photorestoration.png" alt="PhotoRestoration Website" loading="lazy" />
           </div>
-          <div class="project-info">
-            <h3 class="project-title">Indian Recipe App</h3>
-            <p class="project-desc">
-              A full-stack recipe management application for creating,
-              organizing, filtering, and managing recipes with category-based
-              browsing, difficulty filters, and light/dark theme support.
+          </a>
+          <div class="showcase-content">
+            <div class="showcase-number">01</div>
+            <h3 class="showcase-title">PhotoRestoration Website</h3>
+            <p class="showcase-desc">
+              Built a custom website for a photo restoration business, enabling online service promotion, portfolio presentation, and lead generation through contact and inquiry forms. Implemented Google Analytics to track users who has visited the website. Beautiful Custom Theme implemented representing old darkroom/ film look. Before/ After slider — click any portfolio image to open a comparison modal with a draggable slider that wipes between the damaged and restored photo. Fixed bottom navigation bar on mobile quick-access shortcut tabs that stay visible as you scroll, letting users jump between sections. Contact form — real form submissions via Web3Forms API with validation and error handling.
             </p>
-            <div class="project-tags">
-              <span class="project-tag">React</span>
-              <span class="project-tag">Express</span>
-              <span class="project-tag">MySQL</span>
-              <span class="project-tag">Node.js</span>
-              <span class="project-tag">CORS</span>
+            <div class="showcase-tags">
+              <span class="showcase-tag">HTML</span>
+              <span class="showcase-tag">Tailwind CSS</span>
+              <span class="showcase-tag">JavaScript</span>
+              <span class="showcase-tag">AstroJS</span>
+              <span class="showcase-tag">SEO</span>
+              <span class="showcase-tag">Google Analytics</span>
             </div>
+            <a href="https://photo-restorations.vercel.app/" target="_blank" class="showcase-link">
+              View Live Website
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </a>
           </div>
-        </a>
-        <a
-          href="https://github.com/InzamamShaikh567/Job-Application-Tracker-Dashboard"
-          target="_blank"
-          class="project-card"
-          style="text-decoration: none; color: inherit"
-        >
-          <div class="project-image">
-            <span class="project-number">02</span>
-            <img
-              src="assests/jobtracker.jpg"
-              alt="Job Application Tracker"
-              loading="lazy"
-            />
+        </div>
+      </div>
+
+      <div class="project-showcase showcase-reveal">
+        <div class="showcase-inner reverse">
+          <a href="https://github.com/InzamamShaikh567/Indian-recipe-app" target="_blank" class="showcase-image-link">
+          <div class="showcase-image">
+            <img src="assests/Recipe.jpg" alt="Indian Recipe App" loading="lazy" />
           </div>
-          <div class="project-info">
-            <h3 class="project-title">Job Application Tracker</h3>
-            <p class="project-desc">
-              MERN stack with authentication, analytics dashboard, and file
-              uploads.
+          </a>
+          <div class="showcase-content">
+            <div class="showcase-number">02</div>
+            <h3 class="showcase-title">Indian Recipe App</h3>
+            <p class="showcase-desc">
+              A full-stack recipe management application for creating, organizing, filtering, and managing recipes with category-based browsing, difficulty filters, and light/dark theme support.
             </p>
-            <div class="project-tags">
-              <span class="project-tag">MERN</span>
-              <span class="project-tag">React</span>
-              <span class="project-tag">Node.js</span>
-              <span class="project-tag">MongoDB</span>
-              <span class="project-tag">Tailwind CSS</span>
+            <div class="showcase-tags">
+              <span class="showcase-tag">React</span>
+              <span class="showcase-tag">Express</span>
+              <span class="showcase-tag">MySQL</span>
+              <span class="showcase-tag">Node.js</span>
+              <span class="showcase-tag">CORS</span>
             </div>
+            <a href="https://github.com/InzamamShaikh567/Indian-recipe-app" target="_blank" class="showcase-link">
+              View Project
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </a>
           </div>
-        </a>
-        <a
-          href="https://github.com/InzamamShaikh567/SupportDesk-CRM-app"
-          target="_blank"
-          class="project-card"
-          style="text-decoration: none; color: inherit"
-        >
-          <div class="project-image">
-            <span class="project-number">03</span>
-            <img src="assests/SupportDesk.jpg" alt="GlobeInfo" loading="lazy" />
+        </div>
+      </div>
+
+      <div class="project-showcase showcase-reveal">
+        <div class="showcase-inner">
+          <a href="https://github.com/InzamamShaikh567/Job-Application-Tracker-Dashboard" target="_blank" class="showcase-image-link">
+          <div class="showcase-image">
+            <img src="assests/jobtracker.jpg" alt="Job Application Tracker" loading="lazy" />
           </div>
-          <div class="project-info">
-            <h3 class="project-title">SupportDesk CRM</h3>
-            <p class="project-desc">
-              Full-Stack CRM System with Role-Based Access Control. 3 User
-              Roles: Agent, Team Lead, Admin - each with tailored dashboards and
-              permissions
+          </a>
+          <div class="showcase-content">
+            <div class="showcase-number">03</div>
+            <h3 class="showcase-title">Job Application Tracker</h3>
+            <p class="showcase-desc">
+              MERN stack with authentication, analytics dashboard, and file uploads.
             </p>
-            <div class="project-tags">
-              <span class="project-tag">React</span>
-              <span class="project-tag">NodeJs</span>
-              <span class="project-tag">MySQL</span>
-              <span class="project-tag">CRM</span>
+            <div class="showcase-tags">
+              <span class="showcase-tag">MERN</span>
+              <span class="showcase-tag">React</span>
+              <span class="showcase-tag">Node.js</span>
+              <span class="showcase-tag">MongoDB</span>
+              <span class="showcase-tag">Tailwind CSS</span>
             </div>
+            <a href="https://github.com/InzamamShaikh567/Job-Application-Tracker-Dashboard" target="_blank" class="showcase-link">
+              View Project
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </a>
           </div>
-        </a>
-        <a
-          href="https://github.com/InzamamShaikh567/GlobeInfo"
-          target="_blank"
-          class="project-card"
-          style="text-decoration: none; color: inherit"
-        >
-          <div class="project-image">
-            <span class="project-number">04</span>
+        </div>
+      </div>
+
+      <div class="project-showcase showcase-reveal">
+        <div class="showcase-inner reverse">
+          <a href="https://github.com/InzamamShaikh567/SupportDesk-CRM-app" target="_blank" class="showcase-image-link">
+          <div class="showcase-image">
+            <img src="assests/SupportDesk.jpg" alt="SupportDesk CRM" loading="lazy" />
+          </div>
+          </a>
+          <div class="showcase-content">
+            <div class="showcase-number">04</div>
+            <h3 class="showcase-title">SupportDesk CRM</h3>
+            <p class="showcase-desc">
+              Full-Stack CRM System with Role-Based Access Control. 3 User Roles: Agent, Team Lead, Admin - each with tailored dashboards and permissions.
+            </p>
+            <div class="showcase-tags">
+              <span class="showcase-tag">React</span>
+              <span class="showcase-tag">NodeJs</span>
+              <span class="showcase-tag">MySQL</span>
+              <span class="showcase-tag">CRM</span>
+            </div>
+            <a href="https://github.com/InzamamShaikh567/SupportDesk-CRM-app" target="_blank" class="showcase-link">
+              View Project
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="project-showcase showcase-reveal">
+        <div class="showcase-inner">
+          <a href="https://github.com/InzamamShaikh567/GlobeInfo" target="_blank" class="showcase-image-link">
+          <div class="showcase-image">
             <img src="assests/GlobeInfo.jpg" alt="GlobeInfo" loading="lazy" />
           </div>
-          <div class="project-info">
-            <h3 class="project-title">GlobeInfo</h3>
-            <p class="project-desc">
-              World Dictionary website where you can search about any country
-              infomation.
+          </a>
+          <div class="showcase-content">
+            <div class="showcase-number">05</div>
+            <h3 class="showcase-title">GlobeInfo</h3>
+            <p class="showcase-desc">
+              World Dictionary website where you can search about any country information.
             </p>
-            <div class="project-tags">
-              <span class="project-tag">React</span>
-              <span class="project-tag">CSS</span>
-              <span class="project-tag">REST API</span>
+            <div class="showcase-tags">
+              <span class="showcase-tag">React</span>
+              <span class="showcase-tag">CSS</span>
+              <span class="showcase-tag">REST API</span>
             </div>
+            <a href="https://github.com/InzamamShaikh567/GlobeInfo" target="_blank" class="showcase-link">
+              View Project
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </a>
           </div>
-        </a>
+        </div>
+      </div>
 
-        <a
-          href="#"
-          target="_blank"
-          class="project-card"
-          style="text-decoration: none; color: inherit"
-        >
-          <div class="project-image">
-            <span class="project-number">05</span>
-            <img
-              src="assests/Ecommerce.jpg"
-              alt="ECommerce App"
-              loading="lazy"
-            />
+      <div class="project-showcase showcase-reveal">
+        <div class="showcase-inner reverse">
+          <a href="#" target="_blank" class="showcase-image-link">
+          <div class="showcase-image">
+            <img src="assests/Ecommerce.jpg" alt="ECommerce App" loading="lazy" />
           </div>
-          <div class="project-info">
-            <h3 class="project-title">ECommerce App</h3>
-            <p class="project-desc">
-              A full stack Ecommerce Website for shopping Items with
-              authentication and Amazon S3 online Storage.
+          </a>
+          <div class="showcase-content">
+            <div class="showcase-number">06</div>
+            <h3 class="showcase-title">ECommerce App</h3>
+            <p class="showcase-desc">
+              A full stack Ecommerce Website for shopping Items with authentication and Amazon S3 online Storage.
             </p>
-            <div class="project-tags">
-              <span class="project-tag">React</span>
-              <span class="project-tag">SpringBoot</span>
-              <span class="project-tag">MySQL</span>
-              <span class="project-tag">JWT Auth</span>
-              <span class="project-tag">AWS S3 Bucket</span>
+            <div class="showcase-tags">
+              <span class="showcase-tag">React</span>
+              <span class="showcase-tag">SpringBoot</span>
+              <span class="showcase-tag">MySQL</span>
+              <span class="showcase-tag">JWT Auth</span>
+              <span class="showcase-tag">AWS S3 Bucket</span>
             </div>
+            <a href="#" target="_blank" class="showcase-link">
+              View Project
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </a>
           </div>
-        </a>
+        </div>
       </div>
     </section>
 
@@ -1655,7 +1901,7 @@
         obsessing over small visual details.
       </p>
       <a
-        href="https://drive.google.com/file/d/18WjZ5BlVc1KS4JVPwDDBT-tXmoMMMyXl/view"
+        href="https://drive.google.com/file/d/1DrhQGHLgJqYE3lOKx6fXlPpd_Bj0QzMo/view"
         target="_blank"
         class="btn btn-primary"
         >View My Resume</a
@@ -1765,6 +2011,39 @@
       <p>Designed & Built with <span>♥</span> by Inzamamul Shaikh</p>
     </footer>
 
+    <!-- Section Nav Rail (Desktop) -->
+    <nav class="nav-rail" data-nav-rail aria-label="Section navigation">
+      <a href="#home" class="rail-link is-active" data-section="home">
+        <span class="rail-num">01</span>
+        <span class="rail-label">Home</span>
+      </a>
+      <a href="#projects" class="rail-link" data-section="projects">
+        <span class="rail-num">02</span>
+        <span class="rail-label">Projects</span>
+      </a>
+      <a href="#skills" class="rail-link" data-section="skills">
+        <span class="rail-num">03</span>
+        <span class="rail-label">Skills</span>
+      </a>
+      <a href="#about" class="rail-link" data-section="about">
+        <span class="rail-num">04</span>
+        <span class="rail-label">About</span>
+      </a>
+      <a href="#contact" class="rail-link" data-section="contact">
+        <span class="rail-num">05</span>
+        <span class="rail-label">Contact</span>
+      </a>
+    </nav>
+
+    <!-- Section Nav Dock (Mobile) -->
+    <nav class="nav-dock" data-nav-dock aria-label="Section navigation">
+      <a href="#home" class="dock-link is-active" data-section="home">Home</a>
+      <a href="#projects" class="dock-link" data-section="projects">Projects</a>
+      <a href="#skills" class="dock-link" data-section="skills">Skills</a>
+      <a href="#about" class="dock-link" data-section="about">Resume</a>
+      <a href="#contact" class="dock-link" data-section="contact">Contact</a>
+    </nav>
+
     <script>
       // Loader
       window.addEventListener("load", () => {
@@ -1799,34 +2078,13 @@
 
       // Hover effects
       const hoverTargets = document.querySelectorAll(
-        "a, button, .project-card, .skill-item, .about-card, .social-link"
+        "a, button, .project-showcase, .skill-item, .about-card, .social-link"
       );
       hoverTargets.forEach((el) => {
         el.addEventListener("mouseenter", () => cursor.classList.add("hover"));
         el.addEventListener("mouseleave", () =>
           cursor.classList.remove("hover")
         );
-      });
-
-      // Horizontal scroll for projects (desktop drag)
-      const track = document.getElementById("projectsTrack");
-      let isDown = false,
-        startX,
-        scrollLeft;
-
-      track.addEventListener("mousedown", (e) => {
-        isDown = true;
-        startX = e.pageX - track.offsetLeft;
-        scrollLeft = track.scrollLeft;
-      });
-      track.addEventListener("mouseleave", () => (isDown = false));
-      track.addEventListener("mouseup", () => (isDown = false));
-      track.addEventListener("mousemove", (e) => {
-        if (!isDown) return;
-        e.preventDefault();
-        const x = e.pageX - track.offsetLeft;
-        const walk = (x - startX) * 2;
-        track.scrollLeft = scrollLeft - walk;
       });
 
       // Scroll reveal animations
@@ -1842,7 +2100,7 @@
       );
 
       document
-        .querySelectorAll(".reveal, .reveal-scale")
+        .querySelectorAll(".reveal, .reveal-scale, .showcase-reveal")
         .forEach((el) => revealObserver.observe(el));
 
       // Skills staggered animation
@@ -1907,14 +2165,54 @@
         }
       });
 
-      // Smooth scroll for nav links
+      // Smooth scroll for all anchor links
       document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
         anchor.addEventListener("click", function (e) {
+          const href = this.getAttribute("href");
+          if (href === "#") return;
           e.preventDefault();
-          const target = document.querySelector(this.getAttribute("href"));
-          if (target) target.scrollIntoView({ behavior: "smooth" });
+          const target = document.querySelector(href);
+          if (target) {
+            const top = target.getBoundingClientRect().top + window.scrollY - 80;
+            window.scrollTo({ top, behavior: "smooth" });
+          }
         });
       });
+
+      // Section navigation rail + dock
+      const navRail = document.querySelector('[data-nav-rail]');
+      const navDock = document.querySelector('[data-nav-dock]');
+      const sectionIds = ['home', 'projects', 'skills', 'about', 'contact'];
+      const sectionEls = sectionIds.map(id => document.getElementById(id)).filter(Boolean);
+
+      if ((navRail || navDock) && sectionEls.length) {
+        const allLinks = document.querySelectorAll('[data-section]');
+
+        const observer = new IntersectionObserver((entries) => {
+          let visible = [];
+          entries.forEach(e => {
+            if (e.isIntersecting) visible.push({ id: e.target.id, ratio: e.intersectionRatio });
+          });
+          if (visible.length === 0) return;
+          visible.sort((a, b) => b.ratio - a.ratio);
+          const active = visible[0].id;
+          allLinks.forEach(link => {
+            link.classList.toggle('is-active', link.dataset.section === active);
+          });
+        }, { rootMargin: '-40% 0px -40% 0px', threshold: [0, 0.1, 0.2, 0.3, 0.4, 0.5] });
+
+        sectionEls.forEach(el => observer.observe(el));
+
+        let navTimer;
+        window.addEventListener('scroll', () => {
+          cancelAnimationFrame(navTimer);
+          navTimer = requestAnimationFrame(() => {
+            const show = window.scrollY > window.innerHeight * 0.6;
+            if (navRail) navRail.classList.toggle('is-visible', show);
+            if (navDock) navDock.classList.toggle('is-visible', show);
+          });
+        }, { passive: true });
+      }
 
       // Initial scroll if hash
       if (window.location.hash) {
@@ -2031,5 +2329,99 @@
         }
       });
     </script>
+
+    <!-- ========== COMNYANG CAT ========== -->
+    <div id="cat-wrapper">
+      <div id="drag-handle"></div>
+      <div id="share-name-badge"></div>
+      <div id="cat-speech-bubble"></div>
+      <div id="cat-thinking-dots" aria-label="thinking"><span>.</span><span>.</span><span>.</span></div>
+      <button id="reminder-clock-button" type="button" aria-label="Open reminders" style="display:none">
+        <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+          <rect x="6" y="1" width="4" height="2" fill="currentColor"/><rect x="4" y="3" width="8" height="2" fill="currentColor"/>
+          <rect x="2" y="5" width="2" height="6" fill="currentColor"/><rect x="12" y="5" width="2" height="6" fill="currentColor"/>
+          <rect x="4" y="11" width="8" height="2" fill="currentColor"/><rect x="6" y="5" width="2" height="4" fill="currentColor"/>
+          <rect x="8" y="8" width="3" height="2" fill="currentColor"/>
+        </svg>
+      </button>
+      <section id="reminder-panel" aria-label="Reminders" style="display:none">
+        <div class="reminder-panel-header">
+          <div id="reminder-panel-title">Reminders</div>
+          <div class="reminder-panel-header-actions">
+            <button type="button" id="reminder-add-button">Add</button>
+            <button type="button" id="reminder-panel-close">Close</button>
+          </div>
+        </div>
+        <form id="reminder-form">
+          <div class="reminder-schedule-row">
+            <input id="reminder-time-input" type="time" required>
+            <input id="reminder-repeat-input" type="hidden" value="none">
+            <div id="reminder-repeat-buttons" class="reminder-repeat-buttons" role="group" aria-label="Repeat">
+              <button type="button" data-repeat="none" class="is-selected">Once</button>
+              <button type="button" data-repeat="custom">Choose days</button>
+            </div>
+          </div>
+          <div id="reminder-day-picker" class="reminder-day-picker" aria-label="Choose days">
+            <label><input type="checkbox" value="1">Mon</label><label><input type="checkbox" value="2">Tue</label>
+            <label><input type="checkbox" value="3">Wed</label><label><input type="checkbox" value="4">Thu</label>
+            <label><input type="checkbox" value="5">Fri</label><label><input type="checkbox" value="6">Sat</label>
+            <label><input type="checkbox" value="0">Sun</label>
+          </div>
+          <div class="reminder-message-row">
+            <input id="reminder-message-input" type="text" maxlength="80" placeholder="What should Comnyang remind you?" required autocomplete="off">
+            <button type="button" id="reminder-cancel-button">Cancel</button>
+            <button type="submit" id="reminder-save-button">Save</button>
+          </div>
+        </form>
+        <div id="reminder-list"></div>
+      </section>
+      <form id="cat-name-editor">
+        <input id="cat-name-input" type="text" maxlength="24" autocomplete="off">
+        <button type="submit" aria-label="Save name"><svg viewBox="0 0 12 12"><rect x="2" y="6" width="2" height="2" fill="currentColor"/><rect x="4" y="8" width="2" height="2" fill="currentColor"/><rect x="6" y="6" width="2" height="2" fill="currentColor"/><rect x="8" y="4" width="2" height="2" fill="currentColor"/></svg></button>
+        <button type="button" id="cat-name-cancel" aria-label="Cancel"><svg viewBox="0 0 12 12"><rect x="3" y="3" width="2" height="2" fill="currentColor"/><rect x="7" y="3" width="2" height="2" fill="currentColor"/><rect x="5" y="5" width="2" height="2" fill="currentColor"/><rect x="3" y="7" width="2" height="2" fill="currentColor"/><rect x="7" y="7" width="2" height="2" fill="currentColor"/></svg></button>
+      </form>
+      <form id="user-name-editor">
+        <p id="user-name-guide">Tell Comnyang your name, and Comnyang will call you.</p>
+        <div class="user-name-row">
+          <input id="user-name-input" type="text" maxlength="24" placeholder="Enter your name" autocomplete="off">
+          <button type="submit" id="user-name-save"><svg viewBox="0 0 12 12"><rect x="2" y="6" width="2" height="2" fill="currentColor"/><rect x="4" y="8" width="2" height="2" fill="currentColor"/><rect x="6" y="6" width="2" height="2" fill="currentColor"/><rect x="8" y="4" width="2" height="2" fill="currentColor"/></svg></button>
+          <button type="button" id="user-name-cancel">x</button>
+        </div>
+      </form>
+      <form id="fixed-message-editor">
+        <input id="fixed-message-input" type="text" maxlength="80" autocomplete="off">
+        <button type="submit" id="fixed-message-save">OK</button>
+        <button type="button" id="fixed-message-cancel">x</button>
+      </form>
+      <form id="pomodoro-focus-editor" style="display:none">
+        <input id="pomodoro-focus-input" type="number" min="1" max="180" step="1" autocomplete="off">
+        <span>MIN</span>
+        <button type="submit">OK</button>
+        <button type="button" id="pomodoro-focus-cancel">x</button>
+      </form>
+      <form id="share-duration-editor" style="display:none">
+        <input id="share-duration-input" type="number" min="5" max="30" step="1" autocomplete="off">
+        <span>SEC</span>
+        <button type="submit" id="share-duration-start">REC</button>
+        <button type="button" id="share-duration-cancel">x</button>
+      </form>
+      <object id="cat" type="image/svg+xml" data="cat/svg/cat-idle-follow-v2.svg" aria-label="cat"></object>
+      <div id="purr-hearts" aria-hidden="true"><span></span><span></span><span></span></div>
+      <div id="heat-steam">
+        <span class="steam-particle"></span><span class="steam-particle"></span><span class="steam-particle"></span>
+        <span class="steam-particle"></span><span class="steam-particle"></span>
+      </div>
+      <object id="press-left" type="image/svg+xml" data="cat/svg/press-left.svg" aria-label="cat-typing-left"></object>
+      <object id="press-right" type="image/svg+xml" data="cat/svg/press-right.svg" aria-label="cat-typing-right"></object>
+      <object id="scroll-unroll" type="image/svg+xml" data="cat/svg/scroll-unroll.svg" aria-label="cat-unrolling-paper"></object>
+      <object id="jump-start" type="image/svg+xml" data="cat/svg/jump-start.svg" aria-label="cat-jump-start"></object>
+      <object id="jump-ing" type="image/svg+xml" data="cat/svg/jump-ing.svg" aria-label="cat-jumping"></object>
+      <object id="stretch-svg-end" type="image/svg+xml" data="cat/svg/stretch-end.svg" aria-label="stretch"></object>
+      <object id="stretch-pose-default" type="image/svg+xml" data="cat/svg/stretch-pose-default.svg" aria-label="stretching-default"></object>
+      <object id="stretch-pose-ing" type="image/svg+xml" data="cat/svg/stretch-pose-ing.svg" aria-label="stretching-active"></object>
+    </div>
+    <script src="cat/shim.js"></script>
+    <script src="cat/renderer/cell-mappings.js"></script>
+    <script src="cat/renderer/renderer.js"></script>
   </body>
 </html>
