@@ -1148,6 +1148,8 @@ body.dragging #stretch-svg-end {
   height: 100vh;
   z-index: 9999;
   pointer-events: none;
+}
+body.dragging #cat-wrapper {
   touch-action: none;
 }
 #cat-wrapper.dragging { cursor: grabbing !important; }
