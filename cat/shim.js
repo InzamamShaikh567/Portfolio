@@ -404,7 +404,6 @@
     items.push({ type: 'separator' });
 
     // Presets
-    items.push({ label: 'Color / Pattern', enabled: false });
     PRESETS.forEach(function (p) {
       items.push({
         label: p.name,
@@ -436,6 +435,11 @@
 
     items.push({ label: 'About Comnyang', action: function () {
       alert('Comnyang — A desktop pet cat\nhttps://comnyang.com/');
+      hideContextMenu();
+    }});
+
+    items.push({ label: 'Visit comnyang.com', action: function () {
+      window.open('http://comnyang.com/', '_blank');
       hideContextMenu();
     }});
 
